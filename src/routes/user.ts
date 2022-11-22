@@ -6,4 +6,10 @@ export async function userRoutes(fastify: FastifyInstance) {
     const count = await prisma.user.count();
     return { count };
   });
+
+  fastify.get("/hello", async (req, reply) => {
+    return reply.status(200).send({
+      message: "hello world",
+    });
+  });
 }
