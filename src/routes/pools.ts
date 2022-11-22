@@ -152,6 +152,30 @@ export async function poolRoutes(fastify: FastifyInstance) {
 
       const { id } = getPoolParams.parse(request.params);
       const pool = await prisma.pool.findUnique({
+        include: {
+          _count: {
+            select: {
+              participants: true,
+            },
+          },
+          participants: {
+            select: {
+              id: true,
+              user: {
+                select: {
+                  avatarUrl: true,
+                },
+              },
+            },
+            take: 4,
+          },
+          owner: {
+            select: {
+              name: true,
+              id: true,
+            },
+          },
+        },
         where: {
           id,
         },
