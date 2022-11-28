@@ -82,10 +82,24 @@ export async function guessRoutes(fastify: FastifyInstance) {
           participantId: participant.id,
           firstTeamPoints,
           secondTeamPoints,
+          poolId,
         },
       });
 
       return reply.status(201).send();
     }
   );
+
+  fastify.get("/guesses/:poolId",
+  {onRequest:[authenticate]},
+ async(req)=> {
+  const getGameParams = z.object({
+    poolId: z.string(),
+  });
+  const {poolId}=getGameParams.parse(req.params)
+  const guesses = await prisma.guess.findMany({})
+
+  return {guesses}
+  
+ })
 }

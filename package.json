@@ -14,7 +14,7 @@
     
   },
   "prisma": {
-    "seed": "tsx prisma/seed.ts"
+    "seed": "tsx prisma/post_games.ts"
   },
   "dependencies": {
     "@fastify/cors": "^8.1.1",

@@ -1,5 +1,5 @@
 import fastify, { FastifyInstance } from "fastify";
-import { z } from "zod";
+import { string, z } from "zod";
 import { prisma } from "../lib/prisma";
 import { authenticate } from "../plugins/authenticate";
 
@@ -16,7 +16,7 @@ export async function gameRoutes(fastify: FastifyInstance) {
 
       const games = await prisma.game.findMany({
         orderBy: {
-          date: "desc",
+          date: "asc",
         },
         include: {
           guesses: {
@@ -41,4 +41,50 @@ export async function gameRoutes(fastify: FastifyInstance) {
       };
     }
   );
+fastify.post('/game',async(req,replay)=>{
+
+
+  const createGameBody = z.object({
+    firstTeamCountryCode:z.string(),
+    secondTeamCountryCode:z.string(),
+    date: z.date()
+  })
+
+  const {date,firstTeamCountryCode,secondTeamCountryCode}= createGameBody.parse(req)
+
+  await prisma.game.create({
+    data:{
+      date,
+      firstTeamCountryCode,
+    secondTeamCountryCode,
+    }
+  })
+
+  return {firstTeamCountryCode,secondTeamCountryCode}
 }
+
+)
+
+fastify.get('/games/:gameId',{
+  onRequest:[authenticate]
+},async(res,rep)=>{
+  const gameParams = z.object({
+    gameId:z.string(),
+  })
+
+  const {gameId}=gameParams.parse(res.params)
+
+const game =await prisma.game.findUnique({
+  where:{
+    id:gameId,
+  }
+})
+
+return {game}
+})
+}
+
+
+
+
+
