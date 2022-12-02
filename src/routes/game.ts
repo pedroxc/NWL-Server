@@ -47,20 +47,20 @@ fastify.post('/game',async(req,replay)=>{
   const createGameBody = z.object({
     firstTeamCountryCode:z.string(),
     secondTeamCountryCode:z.string(),
-    date: z.date()
+    date: z.string()
   })
 
-  const {date,firstTeamCountryCode,secondTeamCountryCode}= createGameBody.parse(req)
+  const {date,firstTeamCountryCode,secondTeamCountryCode}= createGameBody.parse(req.body)
 
-  await prisma.game.create({
+ const game = await prisma.game.create({
     data:{
-      date,
-      firstTeamCountryCode,
-    secondTeamCountryCode,
+      date:date,
+      firstTeamCountryCode:firstTeamCountryCode,
+    secondTeamCountryCode:secondTeamCountryCode,
     }
   })
 
-  return {firstTeamCountryCode,secondTeamCountryCode}
+  return game
 }
 
 )
