@@ -82,7 +82,23 @@ const game =await prisma.game.findUnique({
 
 return {game}
 })
+
+fastify.delete('/games/:gameId',{onRequest:[authenticate]},async(req)=>{
+  const gameBoddy = z.object({
+    gameId:z.string()
+  })
+  const {gameId}= gameBoddy.parse(req.params)
+
+  const response = await prisma.game.delete({
+    where:{
+      id:gameId
+    }
+  })
+  return response 
+})
 }
+
+
 
 
 
